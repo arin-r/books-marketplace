@@ -1,5 +1,5 @@
 import { ChevronsUpDown } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
+import { signOut} from "next-auth/react";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { truncate } from "@/lib/utils";
-import { Session } from "next-auth";
+import type { Session } from "next-auth";
 
 const UserInfoDropdown = ({ session }: { session: Session }) => {
   return (
@@ -32,7 +32,8 @@ const UserInfoDropdown = ({ session }: { session: Session }) => {
               width={40}
               height={40}
             />
-            <div className="flex flex-col items-start">
+            {/* flex was removed from classname below */}
+            <div className="hidden sm:block flex-col items-start">
               <span className="ml-2 text-sm">
                 {truncate(session?.user?.email!, 18)}
               </span>

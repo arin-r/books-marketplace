@@ -68,10 +68,10 @@ const SearchBar: FC<SearchBarProps> = ({}) => {
     >
       <CommandInput
         // isLoading={isFetching}
-        // onValueChange={(text) => {
-        //   setInput(text)
-        //   debounceRequest()
-        // }}
+        onValueChange={(text) => {
+          setInput(text)
+          // debounceRequest()
+        }}
         value={input}
         className="outline-none border-none focus:border-none focus:outline-none ring-0"
         placeholder="Search books & more..."

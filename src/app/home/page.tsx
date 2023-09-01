@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { getAuthSession } from "@/lib/auth";
 
-const page = () => {
+const page = async () => {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between px-8 pt-14">
+    <main className="flex min-h-screen flex-col items-center gap-y-5 px-8 pt-14">
       <Button>Click me!</Button>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur iusto
