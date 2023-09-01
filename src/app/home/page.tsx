@@ -1,14 +1,9 @@
-import { Button, buttonVariants } from "@/components/ui/button";
-import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
-export default function Home() {
+const page = () => {
   return (
-    <main className="flex min-h-screen flex-col items-center px-8 pt-14">
-      <Link href="sign-in" className={buttonVariants({
-        variant: "outline"
-      })}>
-        Log In
-      </Link>
+    <main className="flex min-h-screen flex-col items-center justify-between px-8 pt-14">
+      <Button>Click me!</Button>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur iusto
         itaque fugit corporis aspernatur eveniet dolores reiciendis in
@@ -27,4 +22,6 @@ export default function Home() {
       </p>
     </main>
   );
-}
+};
+
+export default page;

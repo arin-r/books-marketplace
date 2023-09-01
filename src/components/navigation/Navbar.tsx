@@ -1,8 +1,14 @@
-"use client"
+"use client";
 
 import { Fragment, useState } from "react";
 import SideDrawer from "./SideDrawer";
 import { Menu } from "lucide-react";
+import UserInfoDropdown from "./UserInfoDropdown";
+import { useSession } from "next-auth/react";
+import { Button, buttonVariants } from "../ui/button";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import SearchBar from "../SearchBar";
 
 const SimpleCard = () => {
   return (
@@ -23,16 +29,16 @@ const SimpleCard = () => {
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { data: session } = useSession();
+
   return (
     <Fragment>
       <SideDrawer isOpen={isOpen} setIsOpen={setIsOpen}>
         <SimpleCard />
         <SimpleCard />
         <SimpleCard />
-        <SimpleCard />
-        <SimpleCard />
       </SideDrawer>
-      <nav className="bg-white opacity-100 py-4 px-6 fixed top-0 w-full z-10 border-b-gray-300 border-b-[1px]">
+      <nav className="bg-white opacity-100 px-6 fixed top-0 w-full z-10 border-b-gray-300 border-b-[1px]">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between">
             <div
@@ -42,28 +48,22 @@ const Navbar = () => {
             >
               <Menu color="black" />
             </div>
-            <ul className="flex space-x-4">
-              <li>
-                <a href="#" className="">
-                  Home
-                </a>
-              </li>
-              <li>
-                <a href="#" className="">
-                  About
-                </a>
-              </li>
-              <li>
-                <a href="#" className="">
-                  Services
-                </a>
-              </li>
-              <li>
-                <a href="#" className="">
-                  Contact
-                </a>
-              </li>
-            </ul>
+            <SearchBar />
+            {session?.user && <UserInfoDropdown session={session} />}
+            {!session?.user && (
+              <Link
+                href="/sign-in"
+                className={cn(
+                  buttonVariants({
+                    variant: "outline",
+                    size: "sm",
+                  }),
+                  "my-2"
+                )}
+              >
+                Log In
+              </Link>
+            )}
           </div>
         </div>
       </nav>
