@@ -9,7 +9,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <div className="w-full">
         <div
           className={cn(
-            "w-full space-y-4 md:p-8 p-4 pt-6 h-screen overflow-auto bg-slate-50 dark:bg-slate-950",
+            "w-full space-y-4 md:p-8 p-4 pt-6 h-screen overflow-hiddens bg-slate-50 dark:bg-stone-950",
             {
               "h-[calc(100vh-4rem)]": false,
             }

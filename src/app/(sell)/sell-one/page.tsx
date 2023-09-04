@@ -108,7 +108,7 @@ const Page = () => {
   };
 
   return (
-    <Card className="w-[600px]">
+    <Card className="w-full sm:w-[600px]">
       <CardContent>
         <Form {...form}>
           <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
