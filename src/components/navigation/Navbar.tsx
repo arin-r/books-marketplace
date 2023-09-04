@@ -1,14 +1,15 @@
 "use client";
 
-import { Fragment, useState } from "react";
-import SideDrawer from "./SideDrawer";
-import { Menu } from "lucide-react";
-import UserInfoDropdown from "./UserInfoDropdown";
 import { useSession } from "next-auth/react";
-import { Button, buttonVariants } from "../ui/button";
 import Link from "next/link";
+import React, { FC, Fragment, useState } from "react";
+import { DollarSign, Home, Menu } from "lucide-react";
+
+import UserInfoDropdown from "./UserInfoDropdown";
+import { buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
 import SearchBar from "../SearchBar";
+import SideDrawer from "./SideDrawer";
 
 const SimpleCard = () => {
   return (
@@ -27,18 +28,53 @@ const SimpleCard = () => {
   );
 };
 
-const Navbar = () => {
+const SideDrawerItem = ({
+  content,
+  isActive,
+  Icon,
+}: {
+  content: string;
+  isActive: boolean;
+  Icon: FC;
+  // Icon: any
+}) => {
+  return (
+    <div className="space-y-2">
+      <Link
+        href={content}
+        className={cn(
+          "flex items-center w-full justify-start hover:bg-slate-50 dark:hover:bg-slate-900 rounded-md px-2 py-1 gap-2",
+          {
+            "bg-slate-50 dark:bg-slate-900": isActive,
+          }
+        )}
+      >
+        <Icon />
+        <p className="flex">{content}</p>
+      </Link>
+    </div>
+  );
+};
+
+/**
+ * Contains all navigation
+ * @returns
+ */
+const Navbar = ({ showSearchBar }: { showSearchBar: boolean }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { data: session } = useSession();
 
   return (
     <Fragment>
       <SideDrawer isOpen={isOpen} setIsOpen={setIsOpen}>
-        <SimpleCard />
-        <SimpleCard />
-        <SimpleCard />
+        <SideDrawerItem Icon={() => <Home />} isActive={true} content="shop" />
+        <SideDrawerItem
+          Icon={() => <DollarSign />}
+          isActive={false}
+          content="sell"
+        />
       </SideDrawer>
-      <nav className="bg-white opacity-100 px-6 fixed top-0 w-full z-10 border-b-gray-300 border-b-[1px]">
+      <nav className="bg-white dark:bg-stone-950 opacity-100 px-6 fixed top-0 w-full z-10 border-b-zinc-200 dark:border-b-zinc-800 border-b-[1px]">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between">
             <div
@@ -46,16 +82,16 @@ const Navbar = () => {
                 setIsOpen((prev) => !prev);
               }}
             >
-              <Menu color="black" />
+              <Menu className="dark:bg-black" />
             </div>
-            <SearchBar />
+            {showSearchBar ? <SearchBar /> : null}
             {session?.user && <UserInfoDropdown session={session} />}
             {!session?.user && (
               <Link
                 href="/sign-in"
                 className={cn(
                   buttonVariants({
-                    variant: "outline",
+                    variant: "secondary",
                     size: "sm",
                   }),
                   "my-2"

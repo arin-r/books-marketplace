@@ -20,17 +20,17 @@ const SideDrawer = ({
     >
       <section
         className={
-          "w-64 left-0 absolute bg-white h-full shadow-xl delay-400 duration-500 ease-in-out transition-all transform " +
+          "w-64 left-0 absolute bg-white dark:bg-stone-950 h-full shadow-xl delay-400 duration-500 ease-in-out transition-all transform " +
           (isOpen ? "translate-x-0" : "-translate-x-full")
         }
       >
         <article
           className={
-            "px-3 relative w-64 pb-10 flex flex-col space-y-6 " +
+            "px-4 relative w-64 pb-10 flex flex-col gap-2 " +
             (isOpen ? "overflow-y-auto h-full" : "")
           }
         >
-          <header className="p-4 font-bold text-lg">Header</header>
+          <header className="p-4 font-bold text-lg">Books Marketplace</header>
           {children}
         </article>
       </section>

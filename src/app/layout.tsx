@@ -23,8 +23,9 @@ export default function RootLayout({
       <head />
       <body
         className={cn(
-          "relative flex min-h-screen w-full flex-col justify-center scroll-smooth bg-background font-sans antialiased",
-          fontSans.variable
+          "dark:bg-stone-950 bg-white relative flex min-h-screen w-full flex-col justify-center scroll-smooth bg-background font-sans antialiased",
+          fontSans.variable,
+          "dark"
         )}
       >
         <SessionProvider>

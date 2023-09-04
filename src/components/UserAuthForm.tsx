@@ -16,6 +16,8 @@ const UserAuthForm: FC<UserAuthFormProps> = ({ className, ...props }) => {
 
     try {
       await signIn("google", {
+        // Not sure what this does, but it isn't doing what I 
+        // intended it to do.
         // callbackUrl: "http://localhost:3000/home",
       });
     } catch (error) {

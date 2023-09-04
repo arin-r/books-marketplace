@@ -65,7 +65,7 @@ export const authOptions: NextAuthOptions = {
     redirect({ baseUrl, url }) {
       // console.log(`baseUrl = ${baseUrl}`);
       // console.log(`url = ${url}`);
-      return "/home";
+      return "/shop";
     },
   },
 };
