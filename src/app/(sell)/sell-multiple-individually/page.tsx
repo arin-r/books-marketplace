@@ -1,7 +1,9 @@
-"use client"
+"use client";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { FC } from "react";
+
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Form,
@@ -25,7 +27,6 @@ import { TextareaAuto } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import CreatableInput from "@/components/ui/creatable-input";
 import { toast } from "@/components/ui/use-toast";
-import { FC } from "react";
 
 type FormData = {
   step: number;
