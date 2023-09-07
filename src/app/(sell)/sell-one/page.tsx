@@ -15,7 +15,7 @@ import {
   FormMessage,
   FormStep,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Input, NumericInput, PatternInput } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -24,68 +24,38 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import { BookAge, Branch } from "@prisma/client";
+import {
+  ListingPayload,
+  bookDetails,
+  sellerDetails,
+} from "@/lib/validators/listing";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 type FormData = {
   step: number;
   bookName: string;
   requiredInYear: string;
+  price: string;
   courseOrSubject: string;
-  branch: string;
-  bookAge: string;
-  sellerName: string;
+  branch: Branch;
+  bookAge: BookAge;
+  // sellerName: string;
   sellerPhone: string;
 };
 
-//TODO: Move this to a types folder, will be needed in backend as well
-const bookAges = {
-  ALMOST_NEW: "Almost new",
-  LESS_THAN_2: "< 2 years",
-  LESS_THAN_4: "< 4 years",
-  LESS_THAN_6: "< 6 years",
-  LESS_THAN_8: "< 8 years",
-  MORE_THAN_8: "8 + years",
-};
-
-const branches = {
-  MECH: "MECH",
-  ENI: "ENI",
-  EEE: "EEE",
-  ECE: "ECE",
-  CS: "CS",
-};
-
-const firstStepSchema = z.object({
+const firstStepSchema = bookDetails.extend({
   step: z.literal(1),
-  bookName: z.string().min(1, {
-    message: "Book name should be atleast 1 character long",
-  }),
+  //requiredInYear is overwritten to be an enum of strings in the frontend
   requiredInYear: z.enum(["1", "2", "3", "4", "5"]),
-  courseOrSubject: z.string().optional(),
-  branch: z
-    .enum([
-      branches.MECH,
-      branches.ENI,
-      branches.EEE,
-      branches.ECE,
-      branches.CS,
-    ])
-    .optional(),
-  bookAge: z
-    .enum([
-      bookAges.ALMOST_NEW,
-      bookAges.LESS_THAN_2,
-      bookAges.LESS_THAN_4,
-      bookAges.LESS_THAN_6,
-      bookAges.LESS_THAN_8,
-      bookAges.MORE_THAN_8,
-    ])
-    .optional(),
+  //price is overwritten to a be string in the frontend
+  price: z.string(),
 });
 
-const secondStepSchema = firstStepSchema.extend({
+const secondStepSchema = sellerDetails.merge(firstStepSchema).extend({
   step: z.literal(2),
-  sellerName: z.string().optional(),
-  sellerPhone: z.string().optional(),
 });
 
 const schema = z.discriminatedUnion("step", [
@@ -93,9 +63,27 @@ const schema = z.discriminatedUnion("step", [
   secondStepSchema,
 ]);
 
+const getBookAgeStringFromEnum = (bookAge: BookAge) => {
+  if (bookAge === "ALMOST_NEW") {
+    return "Almost new";
+  } else if (bookAge === "LESS_THAN_2") {
+    return "< 2 years";
+  } else if (bookAge === "LESS_THAN_4") {
+    return "< 4 years";
+  } else if (bookAge === "LESS_THAN_6") {
+    return "< 6 years";
+  } else if (bookAge === "LESS_THAN_8") {
+    return "< 8 years";
+  } else if (bookAge === "MORE_THAN_8") {
+    return "8 + years";
+  }
+};
 const Page = () => {
   const maxSteps = 2;
 
+  // cosnt {} = useQuery({
+
+  // })
   const form = useForm<FormData>({
     //TODO: Explore all modes
     mode: "all",
@@ -104,27 +92,51 @@ const Page = () => {
     defaultValues: {
       step: 1,
       bookName: "",
+      // price: "0.00",
       // requiredInYear: "",
       courseOrSubject: "",
       // branch: "",
       // bookAge: "",
-      sellerName: "",
-      sellerPhone: "",
+      // sellerName: "",
+      // sellerPhone: "",
     },
   });
 
+  const router = useRouter();
+
+  const { mutate: createListing, isLoading } = useMutation({
+    mutationFn: async ({
+      bookAge,
+      bookName,
+      branch,
+      courseOrSubject,
+      price,
+      requiredInYear,
+      sellerPhone,
+    }: FormData) => {
+      const payload: ListingPayload = {
+        bookName,
+        listingType: "ONE_BOOK",
+        price: parseFloat(price),
+        requiredInYear: parseInt(requiredInYear),
+        sellerPhone,
+        bookAge,
+        courseOrSubject,
+        branch,
+      };
+
+      const response = await axios.post("/api/listing", payload);
+      console.log("response = ", response);
+    },
+
+    onSuccess: () => {
+      router.push("/sell")
+    }
+  });
   const step = form.watch("step");
   const onSubmit = (values: FormData) => {
-    toast({
-      title: "Form data",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      ),
-    });
+    createListing(values);
   };
-  console.log("form = ", form);
   const prevStep = () => {
     if (step > 1) {
       form.setValue("step", step - 1, { shouldValidate: true });
@@ -137,7 +149,6 @@ const Page = () => {
     }
   };
 
-  console.log("errors = ", form.formState.errors);
   return (
     <Card className="w-full sm:w-[600px]">
       <CardContent>
@@ -147,7 +158,7 @@ const Page = () => {
               step={1}
               currentStep={step}
               title="First Step"
-              description={`${step}/${maxSteps} - book related information.`}
+              description={`${step}/${maxSteps} - Book Details.`}
               onPrevStepClick={prevStep}
             >
               {/* <h1>Fields labelled with a * are required, others are optional</h1> */}
@@ -193,6 +204,26 @@ const Page = () => {
               />
               <FormField
                 control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Price *</FormLabel>
+                    <FormControl>
+                      <NumericInput
+                        allowLeadingZeros={false}
+                        decimalScale={2}
+                        fixedDecimalScale
+                        thousandsGroupStyle="thousand"
+                        decimalSeparator="."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="courseOrSubject"
                 render={({ field }) => (
                   <FormItem>
@@ -220,18 +251,13 @@ const Page = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value={branches.MECH}>
-                          {branches.MECH}
+                        <SelectItem value={Branch.MECH}>
+                          {Branch.MECH}
                         </SelectItem>
-                        <SelectItem value={branches.ENI}>
-                          {branches.ENI}
-                        </SelectItem>
-                        <SelectItem value={branches.EEE}>
-                          {branches.ECE}
-                        </SelectItem>
-                        <SelectItem value={branches.CS}>
-                          {branches.CS}
-                        </SelectItem>
+                        <SelectItem value={Branch.EEE}>{Branch.EEE}</SelectItem>
+                        <SelectItem value={Branch.ENI}>{Branch.ENI}</SelectItem>
+                        <SelectItem value={Branch.ECE}>{Branch.ECE}</SelectItem>
+                        <SelectItem value={Branch.CS}>{Branch.CS}</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -254,23 +280,64 @@ const Page = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value={bookAges.ALMOST_NEW}>
-                          {bookAges.ALMOST_NEW}
+                        <SelectItem value={BookAge.ALMOST_NEW}>
+                          {getBookAgeStringFromEnum(BookAge.ALMOST_NEW)}
                         </SelectItem>
-                        <SelectItem value={bookAges.LESS_THAN_2}>
-                          {bookAges.LESS_THAN_2}
+                        <SelectItem value={BookAge.LESS_THAN_2}>
+                          {getBookAgeStringFromEnum(BookAge.LESS_THAN_2)}
                         </SelectItem>
-                        <SelectItem value={bookAges.LESS_THAN_4}>
-                          {bookAges.LESS_THAN_4}
+                        <SelectItem value={BookAge.LESS_THAN_4}>
+                          {getBookAgeStringFromEnum(BookAge.LESS_THAN_4)}
                         </SelectItem>
-                        <SelectItem value={bookAges.LESS_THAN_6}>
-                          {bookAges.LESS_THAN_6}
+                        <SelectItem value={BookAge.LESS_THAN_6}>
+                          {getBookAgeStringFromEnum(BookAge.LESS_THAN_6)}
                         </SelectItem>
-                        <SelectItem value={bookAges.LESS_THAN_8}>
-                          {bookAges.LESS_THAN_8}
+                        <SelectItem value={BookAge.LESS_THAN_8}>
+                          {getBookAgeStringFromEnum(BookAge.LESS_THAN_8)}
                         </SelectItem>
                       </SelectContent>
                     </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormStep>
+            <FormStep
+              step={2}
+              currentStep={step}
+              title="Second Step"
+              description={`${step}/${maxSteps} - Seller Details`}
+              onPrevStepClick={prevStep}
+            >
+              {/* <FormField
+                control={form.control}
+                name="sellerName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="your name..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              /> */}
+              <FormField
+                control={form.control}
+                name="sellerPhone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Contact No. *</FormLabel>
+                    <FormControl>
+                      <PatternInput
+                        // can add +91 to this this format
+                        format="### #### ###"
+                        mask="_"
+                        placeholder="your phone no..."
+                        {...field}
+                        type="tel"
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -281,7 +348,8 @@ const Page = () => {
               type={step === maxSteps ? "submit" : "button"}
               className="w-full"
               variant={step === maxSteps ? "default" : "secondary"}
-              disabled={!form.formState.isValid}
+              disabled={!form.formState.isValid || isLoading}
+              isLoading={isLoading}
               onClick={step === maxSteps ? undefined : nextStep}
             >
               {step === maxSteps ? "Submit" : "Next step"}

@@ -1,12 +1,10 @@
 import { cn } from "@/lib/utils";
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 
 // import Drawer from "@/components/Drawer";
 import { fontSans } from "@/lib/fonts";
-import Navbar from "@/components/navigation/Navbar";
-import SessionProvider from "@/components/session-provider";
+import Providers from "@/components/Providers";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,12 +23,10 @@ export default function RootLayout({
         className={cn(
           "dark:bg-stone-950 bg-white relative flex min-h-screen w-full flex-col justify-center scroll-smooth bg-background font-sans antialiased",
           fontSans.variable,
-          "dark"
+          "light"
         )}
       >
-        <SessionProvider>
-          {children}
-        </SessionProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

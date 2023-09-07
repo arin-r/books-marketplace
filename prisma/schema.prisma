@@ -45,10 +45,42 @@ model User {
   name          String?
   email         String?   @unique
   emailVerified DateTime?
-  image    String?
+  image         String?
 
   role UserRole @default(USER)
 
-  accounts Account[]
-  sessions Session[]
+  accounts    Account[]
+  sessions    Session[]
+  ListedBooks ListedBook[]
+}
+
+enum Branch {
+  MECH
+  ENI
+  EEE
+  ECE
+  CS
+}
+
+enum BookAge {
+  ALMOST_NEW
+  LESS_THAN_2
+  LESS_THAN_4
+  LESS_THAN_6
+  LESS_THAN_8
+  MORE_THAN_8
+}
+
+model ListedBook {
+  id              String   @id @default(cuid())
+  bookName        String
+  requiredInYear  Int
+  courseOrSubject String?
+  branch          Branch?
+  bookAge         BookAge?
+  price           Float
+
+  sellerPhone String
+  sellerId    String
+  seller      User   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
 }
