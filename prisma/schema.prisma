@@ -71,6 +71,11 @@ enum BookAge {
   MORE_THAN_8
 }
 
+enum Status {
+  NOT_SOLD
+  SOLD
+}
+
 model ListedBook {
   id              String   @id @default(cuid())
   bookName        String
@@ -83,4 +88,5 @@ model ListedBook {
   sellerPhone String
   sellerId    String
   seller      User   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  status      Status @default(NOT_SOLD)
 }

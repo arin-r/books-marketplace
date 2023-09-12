@@ -13,7 +13,7 @@ export const bookDetails = z.object({
     .max(5, {
       message: "Invalid year, should be lesser than or equal to 5",
     }),
-  price: z.number().min(0.00, {
+  price: z.number().min(0.0, {
     message: "Price of book must be greater than or equal to 0",
   }),
   courseOrSubject: z.string().optional(),
@@ -36,16 +36,16 @@ export const sellerDetails = z.object({
   sellerPhone: z.string(),
 });
 
-export const ListingValidator = z.union([
+export const CreateProductRequestValidator = z.union([
   z
     .object({
-      listingType: z.literal("ONE_BOOK"),
+      productType: z.literal("ONE_BOOK"),
     })
     .merge(bookDetails)
     .merge(sellerDetails),
   z
     .object({
-      listingType: z.literal("MULTIPLE_BOOKS_INDIVIDUALLY"),
+      productType: z.literal("MULTIPLE_BOOKS_INDIVIDUALLY"),
     })
     .merge(
       z.object({
@@ -54,7 +54,7 @@ export const ListingValidator = z.union([
     ),
   z
     .object({
-      listingType: z.literal("MULTIPLE_BOOKS_AS_SET"),
+      productType: z.literal("MULTIPLE_BOOKS_AS_SET"),
     })
     .merge(
       z.object({
@@ -63,7 +63,7 @@ export const ListingValidator = z.union([
     ),
   z
     .object({
-      listingType: z.literal("UCATEGORIZED"),
+      productType: z.literal("UCATEGORIZED"),
     })
     .merge(
       z.object({
@@ -71,5 +71,22 @@ export const ListingValidator = z.union([
       })
     ),
 ]);
+export type CreateProductPayload = z.infer<
+  typeof CreateProductRequestValidator
+>;
 
-export type ListingPayload = z.infer<typeof ListingValidator>
+export const DeleteProductRequestValidator = z.object({
+  productId: z.string(),
+});
+
+export type DeleteProductPayload = z.infer<
+  typeof DeleteProductRequestValidator
+>;
+
+export const ToggleProductStatusRequestValidator = z.object({
+  productId: z.string(),
+});
+
+export type ToggleProductStatusPayload = z.infer<
+  typeof ToggleProductStatusRequestValidator
+>;

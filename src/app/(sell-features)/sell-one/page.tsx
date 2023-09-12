@@ -26,10 +26,10 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { BookAge, Branch } from "@prisma/client";
 import {
-  ListingPayload,
+  CreateProductPayload,
   bookDetails,
   sellerDetails,
-} from "@/lib/validators/listing";
+} from "@/lib/validators/product";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -104,7 +104,7 @@ const Page = () => {
 
   const router = useRouter();
 
-  const { mutate: createListing, isLoading } = useMutation({
+  const { mutate: createProduct, isLoading } = useMutation({
     mutationFn: async ({
       bookAge,
       bookName,
@@ -114,9 +114,9 @@ const Page = () => {
       requiredInYear,
       sellerPhone,
     }: FormData) => {
-      const payload: ListingPayload = {
+      const payload: CreateProductPayload = {
         bookName,
-        listingType: "ONE_BOOK",
+        productType: "ONE_BOOK",
         price: parseFloat(price),
         requiredInYear: parseInt(requiredInYear),
         sellerPhone,
@@ -125,17 +125,17 @@ const Page = () => {
         branch,
       };
 
-      const response = await axios.post("/api/listing", payload);
+      const response = await axios.post("/api/product", payload);
       console.log("response = ", response);
     },
 
     onSuccess: () => {
-      router.push("/sell")
+      router.push("/my-products")
     }
   });
   const step = form.watch("step");
   const onSubmit = (values: FormData) => {
-    createListing(values);
+    createProduct(values);
   };
   const prevStep = () => {
     if (step > 1) {
