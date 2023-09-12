@@ -20,7 +20,7 @@ export async function POST(req: Request) {
 
     const {productId} = ToggleProductStatusRequestValidator.parse(body);
 
-    const prd = await db.listedBook.findUnique({
+    const prd = await db.book.findUnique({
       where: {
         id: productId,
         sellerId: session.user.id,
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
       );
     }
 
-    await db.listedBook.update({
+    await db.book.update({
       where: {
         id: productId,
       },

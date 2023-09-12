@@ -30,7 +30,7 @@ export async function POST(req: Request) {
         courseOrSubject,
       } = data;
 
-      await db.listedBook.create({
+      await db.book.create({
         data: {
           bookName,
           requiredInYear,
@@ -68,7 +68,7 @@ export async function DELETE(req: Request) {
 
     const { productId } = DeleteProductRequestValidator.parse(body);
 
-    const prd = await db.listedBook.findUnique({
+    const prd = await db.book.findUnique({
       where: {
         id: productId,
         sellerId: session.user.id,
@@ -86,12 +86,12 @@ export async function DELETE(req: Request) {
       );
     }
 
-    await db.listedBook.delete({
+    await db.book.delete({
       where: {
         id: productId,
       },
     });
-    // const x = await db.listedBook.delete()
+    // const x = await db.book.delete()
     return new Response("OK", { status: 200 });
   } catch (error) {
     console.log("error = ", error);
@@ -111,7 +111,7 @@ export async function GET(req: Request) {
       return new Response("Unauthorized", { status: 401 });
     }
 
-    const products = await db.listedBook.findMany({
+    const products = await db.book.findMany({
       where: {
         sellerId: session.user.id,
       },

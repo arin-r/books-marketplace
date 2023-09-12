@@ -12,7 +12,7 @@ const Page = async () => {
     redirect("/shop");
   }
 
-  const products = await db.listedBook.findMany({
+  const products = await db.book.findMany({
     where: {
       sellerId: session?.user.id,
     },

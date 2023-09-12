@@ -51,7 +51,7 @@ model User {
 
   accounts    Account[]
   sessions    Session[]
-  ListedBooks ListedBook[]
+  books Book[]
 }
 
 enum Branch {
@@ -76,7 +76,7 @@ enum Status {
   SOLD
 }
 
-model ListedBook {
+model Book {
   id              String   @id @default(cuid())
   bookName        String
   requiredInYear  Int
