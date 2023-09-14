@@ -67,11 +67,11 @@ const Navbar = ({ showSearchBar }: { showSearchBar: boolean }) => {
   return (
     <Fragment>
       <SideDrawer isOpen={isOpen} setIsOpen={setIsOpen}>
-        <SideDrawerItem Icon={() => <Home />} isActive={true} content="shop" />
+        <SideDrawerItem Icon={() => <Home />} isActive={true} content="/shop" />
         <SideDrawerItem
           Icon={() => <DollarSign />}
           isActive={false}
-          content="sell"
+          content="/sell"
         />
       </SideDrawer>
       <nav className="bg-white dark:bg-stone-950 opacity-100 px-6 fixed top-0 w-full z-10 border-b-zinc-200 dark:border-b-zinc-800 border-b-[1px]">

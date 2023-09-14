@@ -33,6 +33,7 @@ import {
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { getBookAgeStringFromEnum } from "@/lib/utils";
 
 type FormData = {
   step: number;
@@ -63,21 +64,6 @@ const schema = z.discriminatedUnion("step", [
   secondStepSchema,
 ]);
 
-const getBookAgeStringFromEnum = (bookAge: BookAge) => {
-  if (bookAge === "ALMOST_NEW") {
-    return "Almost new";
-  } else if (bookAge === "LESS_THAN_2") {
-    return "< 2 years";
-  } else if (bookAge === "LESS_THAN_4") {
-    return "< 4 years";
-  } else if (bookAge === "LESS_THAN_6") {
-    return "< 6 years";
-  } else if (bookAge === "LESS_THAN_8") {
-    return "< 8 years";
-  } else if (bookAge === "MORE_THAN_8") {
-    return "8 + years";
-  }
-};
 const Page = () => {
   const maxSteps = 2;
 
@@ -130,8 +116,8 @@ const Page = () => {
     },
 
     onSuccess: () => {
-      router.push("/my-products")
-    }
+      router.push("/my-products");
+    },
   });
   const step = form.watch("step");
   const onSubmit = (values: FormData) => {

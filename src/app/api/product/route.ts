@@ -105,25 +105,36 @@ export async function DELETE(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const session = await getAuthSession();
+    // const session = await getAuthSession();
 
-    if (!session?.user) {
-      return new Response("Unauthorized", { status: 401 });
-    }
+    // if (!session?.user) {
+    //   return new Response("Unauthorized", { status: 401 });
+    // }
 
     const products = await db.book.findMany({
-      where: {
-        sellerId: session.user.id,
-      },
+      where: {},
       select: {
+        seller: {
+          select: {
+            name: true,
+          },
+        },
+        bookAge: true,
         bookName: true,
+        branch: true,
+        courseOrSubject: true,
         id: true,
         price: true,
+        requiredInYear: true,
+        sellerPhone: true,
+        updatedAt: true,
         status: true,
       },
     });
+
     return new Response(JSON.stringify(products), { status: 200 });
   } catch (error) {
+    console.log(error);
     if (error instanceof z.ZodError) {
       return new Response(error.message, { status: 422 });
     }

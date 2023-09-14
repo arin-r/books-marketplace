@@ -4,7 +4,8 @@ import { getAuthSession } from "@/lib/auth";
 import { db } from "@/lib/db";
 import sleep from "@/lib/sleep";
 import {
-  CreateProductRequestValidator, ToggleProductStatusRequestValidator,
+  CreateProductRequestValidator,
+  ToggleProductStatusRequestValidator,
 } from "@/lib/validators/product";
 import { z } from "zod";
 
@@ -18,7 +19,7 @@ export async function POST(req: Request) {
 
     const body = await req.json();
 
-    const {productId} = ToggleProductStatusRequestValidator.parse(body);
+    const { productId } = ToggleProductStatusRequestValidator.parse(body);
 
     const prd = await db.book.findUnique({
       where: {
@@ -45,9 +46,9 @@ export async function POST(req: Request) {
         id: productId,
       },
       data: {
-        status: prd.status === "NOT_SOLD" ? "SOLD" : "NOT_SOLD"
-      }
-    })
+        status: prd.status === "NOT_SOLD" ? "SOLD" : "NOT_SOLD",
+      },
+    });
 
     return new Response("OK", { status: 200 });
   } catch (error) {

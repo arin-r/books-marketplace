@@ -23,7 +23,7 @@ export default function RootLayout({
         className={cn(
           "dark:bg-stone-950 bg-white relative flex min-h-screen w-full flex-col justify-center scroll-smooth bg-background font-sans antialiased",
           fontSans.variable,
-          "light"
+          "dark"
         )}
       >
         <Providers>{children}</Providers>

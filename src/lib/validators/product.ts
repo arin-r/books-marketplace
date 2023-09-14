@@ -31,10 +31,12 @@ export const bookDetails = z.object({
     ])
     .optional(),
 });
+export type BookDetails = z.infer<typeof bookDetails>;
 
 export const sellerDetails = z.object({
   sellerPhone: z.string(),
 });
+export type SellerDetails = z.infer<typeof sellerDetails>;
 
 export const CreateProductRequestValidator = z.union([
   z
@@ -71,6 +73,7 @@ export const CreateProductRequestValidator = z.union([
       })
     ),
 ]);
+
 export type CreateProductPayload = z.infer<
   typeof CreateProductRequestValidator
 >;
